@@ -138,10 +138,13 @@ function call_room(socket) {
 function create_peerconnection(localStream) {
   const pcConfiguration = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]}
 
-  // *** TODO ***: create a new RTCPeerConnection with this configuration
-  //var pc = ...
+  //create a new RTCPeerConnection with this configuration
+  var pc = new RTCPeerConnection([pcConfiguration]);
 
-  // *** TODO ***: add all tracks of the local stream to the peerConnection
+  //add all tracks of the local stream to the peerConnection
+  localStream.getTracks().forEach(track => {
+    pc.addTrack(track, localStream);
+});
 
   return pc;
 }
