@@ -71,19 +71,49 @@ function create_signaling_connection() {
 function add_signaling_handlers(socket) {
   // Event handlers for joining a room. Just print console messages
   // --------------------------------------------------------------
-  // *** TODO ***: use the 'socket.on' method to create handlers for the 
-  //               messages 'created', 'joined', 'full'.
-  //               For all three messages, simply write a console log.
+  //use the 'socket.on' method to create handlers for the 
+  //  messages 'created', 'joined', 'full'.
+  //  For all three messages, simply write a console log.
+  socket.on('created', (data) => {
+    console.log("created:" + data);
+  });
 
+  socket.on('joined', (data) => {
+    console.log("joined: " + data);
+  });
+
+  socket.on('full', (data) => {
+    console.log("full: " + data);
+  });
 
   // Event handlers for call establishment signaling messages
   // --------------------------------------------------------
-  // *** TODO ***: use the 'socket.on' method to create signaling message handlers:
+  //use the 'socket.on' method to create signaling message handlers:
+
   // new_peer --> handle_new_peer
+  socket.on('new_peer', (data) => {
+    handle_new_peer(data);
+  });
+
   // invite --> handle_invite
+  socket.on('invite', (data) => {
+    handle_invite(data);
+  });
+
   // ok --> handle_ok
+  socket.on('ok', (data) => {
+    handle_ok(data);
+  });
+
   // ice_candidate --> handle_remote_icecandidate
+  socket.on('ice_candidate', (data) => {
+    handle_remote_icecandidate(data);
+  });
+
   // bye --> hangUp
+  socket.on('bye', (data) => {
+    hangUp();
+  });
 
 }
 
