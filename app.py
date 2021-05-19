@@ -88,14 +88,19 @@ def handle_ok(room_name):
 def handle_icecandidate(room_name):
     handle_p2pmessage('ice_candidate', room_name)
 
-#TODO 3x check content
+#TODO 4x check content
 
 @socketio.on('bye')
 def handle_bye(room_name):
-    # *** TODO ***: Get the user_id from the request variable 
-    # *** TODO ***: Use leave_room to remove the sender from the SocketIO room
-    # *** TODO ***: Remove the user from rooms_db
+    #Get the user_id from the request variable
+    user_id = request.sid
+    #Use leave_room to remove the sender from the SocketIO room
+    leave_room(room_name)
+    #Remove the user from rooms_db
+    del rooms_db[user_id]
     # *** TODO ***: Forward the 'bye' message using p2p_message
+    handle_p2pmessage('bye', room_name)
+
     pass
 
 # ===========================================================================
