@@ -75,7 +75,7 @@ function add_signaling_handlers(socket) {
   //  messages 'created', 'joined', 'full'.
   //  For all three messages, simply write a console log.
   socket.on('created', (data) => {
-    console.log("created:" + data);
+    console.log("created: " + data);
   });
 
   socket.on('joined', (data) => {
@@ -111,7 +111,7 @@ function add_signaling_handlers(socket) {
   });
 
   // bye --> hangUp
-  socket.on('bye', (data) => {
+  socket.on('bye', () => {
     hangUp();
   });
 
@@ -176,12 +176,10 @@ async function handle_new_peer(room){
   create_datachannel(peerConnection); // MUST BE CALLED BEFORE createOffer
 
   //use createOffer (with await) generate an SDP offer for peerConnection
-  const offer = await peerConnection.createOffer();
+  var offer = await peerConnection.createOffer();
   //use setLocalDescription (with await) to add the offer to peerConnection
   await peerConnection.setLocalDescription(offer);
   //send an 'invite' message with the offer to the peer.
-  //socket.send('invite', offer); //TODO is this already done?
-  
   socket.emit('invite', offer); 
 }
 
@@ -189,16 +187,14 @@ async function handle_new_peer(room){
 // Caller has sent Invite with SDP offer. I am the Callee.
 // Set remote description and send back an Ok answer.
 async function handle_invite(offer) {
-  console.log('Received Invite offer from Caller: ', offer.type); //TODO remove .type
+  console.log('Received Invite offer from Caller: ', offer);
   //use setRemoteDescription (with await) to add the offer SDP to peerConnection
   await peerConnection.setRemoteDescription(offer); 
   //use createAnswer (with await) to generate an answer SDP
-  const answer = await peerConnection.createAnswer();
+  var answer = await peerConnection.createAnswer();
   //use setLocalDescription (with await) to add the answer SDP to peerConnection
   await peerConnection.setLocalDescription(answer);
   //send an 'ok' message with the answer to the peer.
-  //socket.send('ok', answer); //TODO is this already done?
-
   socket.emit('ok', answer); 
 }
 
@@ -206,7 +202,7 @@ async function handle_invite(offer) {
 // Callee has sent Ok answer. I am the Caller.
 // Set remote description.
 async function handle_ok(answer) {
-  console.log('Received OK answer from Callee: ', answer.type); //TODO remove .type
+  console.log('Received OK answer from Callee: ', answer);
   //use setRemoteDescription (with await) to add the answer SDP 
   // the peerConnection
   await peerConnection.setRemoteDescription(answer);
@@ -225,7 +221,7 @@ async function handle_local_icecandidate(event) {
   // if yes, send a 'ice_candidate' message with the candidate to the peer
   if (event.candidate) {
     // Send the candidate to the remote peer
-    socket.emit('ice_candidate', event.candidate); //TODO is it send?
+    socket.emit('ice_candidate', event.candidate);
   }
 }
 
@@ -292,7 +288,6 @@ function handle_remote_datachannel(event) {
 // Handle Open event on dataChannel: show a message.
 // Received by the Caller and the Callee.
 function handle_datachannel_open(event) {
-  console.log("AY");
   dataChannel.send('*** Channel is ready ***');
 }
 
@@ -320,20 +315,40 @@ function handle_datachannel_message(event) {
 // --------------------------------------------------------------------------
 // HangUp: Send a bye message to peer and close all connections and streams.
 function hangUp() {
-  // *** TODO ***: Write a console log
+  //Write a console log
+  console.log("Connection will be terminated")
 
-  // *** TODO ***: send a bye message with the room name to the server
+  //send a bye message with the room name to the server
+  socket.emit('bye', room);
 
   // Switch off the local stream by stopping all tracks of the local stream
   var localVideo = document.getElementById('localVideo')
   var remoteVideo = document.getElementById('remoteVideo')
-  // *** TODO ***: remove the tracks from localVideo and remoteVideo
 
-  // *** TODO ***: set localVideo and remoteVideo source objects to null
+  //remove the tracks from localVideo and remoteVideo
+  if (remoteVideo.srcObject) {
+    remoteVideo.srcObject.getTracks().forEach(track => track.stop());
+  }
 
-  // *** TODO ***: close the peerConnection and set it to null
+  if (localVideo.srcObject) {
+    localVideo.srcObject.getTracks().forEach(track => track.stop());
+  }
 
-  // *** TODO ***: close the dataChannel and set it to null
+  //set localVideo and remoteVideo source objects to null
+  remoteVideo.srcObject = null;
+  localVideo.srcObject = null;
+
+  //close the peerConnection and set it to null
+  if(peerConnection) {
+    peerConnection.close();
+    peerConnection = null;
+  }
+
+  //close the dataChannel and set it to null
+  if(dataChannel) {
+    dataChannel.close();
+    dataChannel = null;
+  }
 
   document.getElementById('dataChannelOutput').value += '*** Channel is closed ***\n';
 }
