@@ -196,10 +196,13 @@ async function handle_new_peer(room){
 // Set remote description and send back an Ok answer.
 async function handle_invite(offer) {
   console.log('Received Invite offer from Caller: ', offer);
-  // *** TODO ***: use setRemoteDescription (with await) to add the offer SDP to peerConnection 
-  // *** TODO ***: use createAnswer (with await) to generate an answer SDP
-  // *** TODO ***: use setLocalDescription (with await) to add the answer SDP to peerConnection
-  // *** TODO ***: send an 'ok' message with the answer to the peer.
+  //use setRemoteDescription (with await) to add the offer SDP to peerConnection
+  await peerConnection.setRemoteDescription(offer); 
+  //use createAnswer (with await) to generate an answer SDP
+  const answer = await peerConnection.createAnswer();
+  //use setLocalDescription (with await) to add the answer SDP to peerConnection
+  await peerConnection.setLocalDescription(answer);
+  // *** TODO ***: send an 'ok' message with the answer to the peer. (is this already done?)
   socket.emit('ok', answer); 
 }
 
