@@ -40,7 +40,7 @@ def handle_join(room_name):
     if members == 0:
         print(f'Received join from user: {user_id} for NEW room: {room_name}.')
         #Add the user_id to the rooms_db dictionary with the room_name as value
-        rooms_db[user_id] = room_name #TODO maybe swap key:value?
+        rooms_db[user_id] = room_name
         #Use the SocketIO function join_room to add the user to a SocketIO room.
         join_room(room_name)
         #Use the SocketIO emit function to send a 'created' message back with the room_name as argument
@@ -48,7 +48,7 @@ def handle_join(room_name):
     elif members == 1:
         print(f'Received join from user: {user_id} for EXISTING room: {room_name}.')
         #Add the user_id to rooms_db with room_name as value.
-        rooms_db[user_id].append(room_name) #TODO maybe swap key:value?
+        rooms_db[user_id] = room_name
         #Use join_room to add the user to a SocketIO room.
         join_room(room_name)
         #Emit a 'joined' message back to the client, with the room_name as data.
@@ -97,8 +97,8 @@ def handle_bye(room_name):
     #Use leave_room to remove the sender from the SocketIO room
     leave_room(room_name)
     #Remove the user from rooms_db
-    del rooms_db[user_id]
-    # *** TODO ***: Forward the 'bye' message using p2p_message
+    del rooms_db[user_id] #TODO check if works properly
+    #Forward the 'bye' message using p2p_message
     handle_p2pmessage('bye', room_name)
 
     pass
