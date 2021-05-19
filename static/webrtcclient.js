@@ -247,8 +247,8 @@ async function handle_remote_icecandidate(candidate) {
 // Show the remote track video on the web page.
 function handle_remote_track(event) {
   console.log('Received remote track: ', event);
-  // *** TODO ***: get the first stream of the event and show it in remoteVideo
-  //document.getElementById('remoteVideo').srcObject = ...
+  //get the first stream of the event and show it in remoteVideo
+  document.getElementById('remoteVideo').srcObject = event.streams[0];
 }
 
 // ==========================================================================
