@@ -183,9 +183,11 @@ async function handle_new_peer(room){
   console.log('Peer has joined room: ' + room + '. I am the Caller.');
   create_datachannel(peerConnection); // MUST BE CALLED BEFORE createOffer
 
-  // *** TODO ***: use createOffer (with await) generate an SDP offer for peerConnection
-  // *** TODO ***: use setLocalDescription (with await) to add the offer to peerConnection
-  // *** TODO ***: send an 'invite' message with the offer to the peer.
+  //use createOffer (with await) generate an SDP offer for peerConnection
+  const offer = await peerConnection.createOffer();
+  //use setLocalDescription (with await) to add the offer to peerConnection
+  await peerConnection.setLocalDescription(offer);
+  // *** TODO ***: send an 'invite' message with the offer to the peer. (is this already done?)
   socket.emit('invite', offer); 
 }
 
