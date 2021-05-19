@@ -260,12 +260,15 @@ function handle_remote_track(event) {
 function create_datachannel(peerConnection) {
   console.log('Creating dataChannel. I am the Caller.');
 
-  // *** TODO ***: create a dataChannel on the peerConnection
-  //dataChannel = ...
+  //create a dataChannel on the peerConnection
+  dataChannel = peerConnection.createDataChannel("dataChannel");
 
-  // *** TODO ***: connect the handlers onopen and onmessage to the handlers below
-  //dataChannel. ...
+  //connect the handlers onopen and onmessage to the handlers below
+  // Event open --> function handle_datachannel_open
+  dataChannel.open = event => handle_datachannel_open(event);
 
+  // Event message --> function handle_datachannel_message
+  dataChannel.message = event => handle_datachannel_message(event);
 }
 
 // --------------------------------------------------------------------------
