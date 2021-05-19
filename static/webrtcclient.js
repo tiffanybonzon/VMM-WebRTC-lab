@@ -277,15 +277,14 @@ function handle_remote_datachannel(event) {
   console.log('Received remote dataChannel. I am Callee.');
 
   //get the data channel from the event
-  dc = event.dataChannel;
-  console.log(dc); //TODO remove
+  dataChannel = event;
 
   //add event handlers for onopen and onmessage events to the dataChannel
   // Event open --> function handle_datachannel_open
-  dc.open = event => handle_datachannel_open(event);
+  dataChannel.open = event => handle_datachannel_open(event);
 
   // Event message --> function handle_datachannel_message
-  dc.message = event => handle_datachannel_message(event);
+  dataChannel.message = event => handle_datachannel_message(event);
 
 }
 
