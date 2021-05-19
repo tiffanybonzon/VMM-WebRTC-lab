@@ -124,8 +124,7 @@ function call_room(socket) {
   if (room != '') {
       console.log('Joining room: ' + room);
       //send a join message to the server with room as argument.
-      socket.emit('join', room)
-      //TODO maybe 'joined'?
+      socket.emit('join', room);
   }
 }
 
@@ -153,23 +152,16 @@ function create_peerconnection(localStream) {
 // Set the event handlers on the peerConnection. 
 // This function is called by the call function all on top of the file.
 function add_peerconnection_handlers(peerConnection) {
-
   //add event handlers on the peerConnection
 
   // onicecandidate -> handle_local_icecandidate
-  peerConnection.addEventListener('onicecandidate', event => {
-    handle_local_icecandidate(event)
-  });
+  peerConnection.onicecandidate = event => handle_local_icecandidate(event);
 
   // ontrack -> handle_remote_track
-  peerConnection.addEventListener('ontrack', event => {
-    handle_remote_track(event)
-  });
+  peerConnection.ontrack = event => handle_remote_track(event);
 
   // ondatachannel -> handle_remote_datachannel
-  peerConnection.addEventListener('ondatachannel', event => {
-    handle_remote_datachannel(event)
-  });
+  peerConnection.ondatachannel = event => handle_remote_datachannel(event);
 }
 
 // ==========================================================================
@@ -188,7 +180,7 @@ async function handle_new_peer(room){
   //use setLocalDescription (with await) to add the offer to peerConnection
   await peerConnection.setLocalDescription(offer);
   //send an 'invite' message with the offer to the peer.
-  peerConnection.send('invite', offer); //TODO is this already done?
+  socket.send('invite', offer); //TODO is this already done?
   
   socket.emit('invite', offer); 
 }
@@ -197,7 +189,7 @@ async function handle_new_peer(room){
 // Caller has sent Invite with SDP offer. I am the Callee.
 // Set remote description and send back an Ok answer.
 async function handle_invite(offer) {
-  console.log('Received Invite offer from Caller: ', offer);
+  console.log('Received Invite offer from Caller: ', offer.type); //TODO remove .type
   //use setRemoteDescription (with await) to add the offer SDP to peerConnection
   await peerConnection.setRemoteDescription(offer); 
   //use createAnswer (with await) to generate an answer SDP
@@ -205,7 +197,7 @@ async function handle_invite(offer) {
   //use setLocalDescription (with await) to add the answer SDP to peerConnection
   await peerConnection.setLocalDescription(answer);
   //send an 'ok' message with the answer to the peer.
-  peerConnection.send('ok', answer); //TODO is this already done?
+  socket.send('ok', answer); //TODO is this already done?
 
   socket.emit('ok', answer); 
 }
@@ -214,7 +206,7 @@ async function handle_invite(offer) {
 // Callee has sent Ok answer. I am the Caller.
 // Set remote description.
 async function handle_ok(answer) {
-  console.log('Received OK answer from Callee: ', answer);
+  console.log('Received OK answer from Callee: ', answer.type); //TODO remove .type
   //use setRemoteDescription (with await) to add the answer SDP 
   // the peerConnection
   await peerConnection.setRemoteDescription(answer);
@@ -232,8 +224,12 @@ async function handle_local_icecandidate(event) {
   //check if there is a new ICE candidate.
   // if yes, send a 'ice_candidate' message with the candidate to the peer
   if (event.candidate) {
+    console.log("candi")
     // Send the candidate to the remote peer
-    peerConnection.send('ice_candidate', event.candidate);
+    //peerConnection.send('ice_candidate', event.candidate);
+    socket.send('ice_candidate', event.candidate);
+  } else {
+    console.log("no candi :(")
   }
 }
 
@@ -241,7 +237,8 @@ async function handle_local_icecandidate(event) {
 // The peer has sent a remote ICE candidate. Add it to the PeerConnection.
 async function handle_remote_icecandidate(candidate) {
   console.log('Received remote ICE candidate: ', candidate);
-  // *** TODO ***: add the received remote ICE candidate to the peerConnection 
+  //add the received remote ICE candidate to the peerConnection
+  await peerConnection.addIceCandidate(candidate); 
 
 }
 
