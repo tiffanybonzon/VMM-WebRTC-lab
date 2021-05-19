@@ -180,7 +180,7 @@ async function handle_new_peer(room){
   //use setLocalDescription (with await) to add the offer to peerConnection
   await peerConnection.setLocalDescription(offer);
   //send an 'invite' message with the offer to the peer.
-  socket.send('invite', offer); //TODO is this already done?
+  //socket.send('invite', offer); //TODO is this already done?
   
   socket.emit('invite', offer); 
 }
@@ -197,7 +197,7 @@ async function handle_invite(offer) {
   //use setLocalDescription (with await) to add the answer SDP to peerConnection
   await peerConnection.setLocalDescription(answer);
   //send an 'ok' message with the answer to the peer.
-  socket.send('ok', answer); //TODO is this already done?
+  //socket.send('ok', answer); //TODO is this already done?
 
   socket.emit('ok', answer); 
 }
@@ -224,12 +224,8 @@ async function handle_local_icecandidate(event) {
   //check if there is a new ICE candidate.
   // if yes, send a 'ice_candidate' message with the candidate to the peer
   if (event.candidate) {
-    console.log("candi")
     // Send the candidate to the remote peer
-    //peerConnection.send('ice_candidate', event.candidate);
-    socket.send('ice_candidate', event.candidate);
-  } else {
-    console.log("no candi :(")
+    socket.emit('ice_candidate', event.candidate); //TODO is it send?
   }
 }
 
