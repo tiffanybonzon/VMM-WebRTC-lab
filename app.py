@@ -73,9 +73,22 @@ def handle_p2pmessage(msg_type, content):
     emit(msg_type, content, broadcast=True, include_self=False)
 
 
-# *** TODO ***: Create a message handler for 'invite' messages 
-# *** TODO ***: Create a message handler for 'ok' messages 
-# *** TODO ***: Create a message handler for 'ice_candidate' messages 
+#Create a message handler for 'invite' messages
+@socketio.on('invite')
+def handle_invite(room_name):
+    handle_p2pmessage('invite', room_name)
+
+#Create a message handler for 'ok' messages
+@socketio.on('ok')
+def handle_ok(room_name):
+    handle_p2pmessage('ok', room_name)
+
+#Create a message handler for 'ice_candidate' messages 
+@socketio.on('ice_candidate')
+def handle_icecandidate(room_name):
+    handle_p2pmessage('ice_candidate', room_name)
+
+#TODO 3x check content
 
 @socketio.on('bye')
 def handle_bye(room_name):
