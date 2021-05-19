@@ -264,11 +264,11 @@ function create_datachannel(peerConnection) {
   dataChannel = peerConnection.createDataChannel("dataChannel");
 
   //connect the handlers onopen and onmessage to the handlers below
-  // Event open --> function handle_datachannel_open
-  dataChannel.open = event => handle_datachannel_open(event);
+  // Event onopen --> function handle_datachannel_open
+  dataChannel.onopen = event => handle_datachannel_open(event);
 
-  // Event message --> function handle_datachannel_message
-  dataChannel.message = event => handle_datachannel_message(event);
+  // Event onmessage --> function handle_datachannel_message
+  dataChannel.onmessage = event => handle_datachannel_message(event);
 }
 
 // --------------------------------------------------------------------------
@@ -277,14 +277,14 @@ function handle_remote_datachannel(event) {
   console.log('Received remote dataChannel. I am Callee.');
 
   //get the data channel from the event
-  dataChannel = event;
+  dataChannel = event.channel;
 
   //add event handlers for onopen and onmessage events to the dataChannel
-  // Event open --> function handle_datachannel_open
-  dataChannel.open = event => handle_datachannel_open(event);
+  // Event onopen --> function handle_datachannel_open
+  dataChannel.onopen = event => handle_datachannel_open(event);
 
-  // Event message --> function handle_datachannel_message
-  dataChannel.message = event => handle_datachannel_message(event);
+  // Event onmessage --> function handle_datachannel_message
+  dataChannel.onmessage = event => handle_datachannel_message(event);
 
 }
 
@@ -292,6 +292,7 @@ function handle_remote_datachannel(event) {
 // Handle Open event on dataChannel: show a message.
 // Received by the Caller and the Callee.
 function handle_datachannel_open(event) {
+  console.log("AY");
   dataChannel.send('*** Channel is ready ***');
 }
 
@@ -302,7 +303,8 @@ function sendMessage() {
   document.getElementById('dataChannelInput').value = '';
   document.getElementById('dataChannelOutput').value += '        ME: ' + message + '\n';
 
-  // *** TODO ***: send the message through the dataChannel
+  //send the message through the dataChannel
+  dataChannel.send(message);
 
 }
 
