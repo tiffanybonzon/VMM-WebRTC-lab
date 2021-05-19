@@ -211,8 +211,9 @@ async function handle_invite(offer) {
 // Set remote description.
 async function handle_ok(answer) {
   console.log('Received OK answer from Callee: ', answer);
-  // *** TODO ***: use setRemoteDescription (with await) to add the answer SDP 
-  //               the peerConnection
+  //use setRemoteDescription (with await) to add the answer SDP 
+  // the peerConnection
+  await peerConnection.setRemoteDescription(answer);
 }
 
 // ==========================================================================
