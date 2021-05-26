@@ -111,8 +111,10 @@ function add_signaling_handlers(socket) {
   });
 
   // bye --> hangUp
-  socket.on('bye', () => {
-    hangUp();
+  socket.on('bye', (room_name) => {
+    if(room == room_name) {
+      hangUp();
+    }
   });
 
 }
@@ -356,5 +358,6 @@ function hangUp() {
 // --------------------------------------------------------------------------
 // Clean-up: hang up before unloading the window
 window.onbeforeunload = function(e) {
-  hangUp();
+  //hangUp();
+  socket.emit('bye', room);
 }

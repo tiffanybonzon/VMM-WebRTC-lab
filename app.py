@@ -54,7 +54,7 @@ def handle_join(room_name):
         #Emit a 'joined' message back to the client, with the room_name as data.
         emit('joined', room_name)
         #Broadcast to existing client that there is a new peer
-        emit('new_peer', room_name, broadcast=True, include_self=False)
+        emit('new_peer', room=room_name, broadcast=True, include_self=False)
     else:
         print(f'Refusing join from user: {user_id} for FULL room: {room_name}.')
         #Emit a 'full' message back to the client, with the room_name as data.
@@ -70,7 +70,7 @@ def handle_p2pmessage(msg_type, content):
     
     #Broadcast the message to existing client in the SocketIO room.
     # Exclude the sender of the orignal message.
-    emit(msg_type, content, broadcast=True, include_self=False)
+    emit(msg_type, content, room=room_name, broadcast=True, include_self=False)
 
 
 #Create a message handler for 'invite' messages
